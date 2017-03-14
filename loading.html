@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>图片预加载</title>
+        <script src="js/jquery-1.4.2.min.js"></script>
+		<style>
+			html,body,p{margin:0;padding:0;}
+			.load {height:5px;font-size: 12px;background: #109874;text-align: center;color: #ddd;width:0;margin-bottom:10px;position:fixed;left:0;top:0;}
+			img{display:block;margin-bottom:10px;width:30%; }
+			#precent{ width:100%; margin:100px auto auto auto;text-align:center}
+			.loading{  width:100%; background:#fff; position:fixed; height:100%}
+			.barbg{ width:200px; background-color:#ccc; height:3px; margin:0px auto}
+			.bar{ width:0px; height:2px; background-color:#3300ff; display:block;}
+			.main{ display:none;}
+		</style> 
+	</head>
+	<body>
+        
+		<div class="loading" id="non">
+        	<div id="precent">0%</div>
+        	<div class="barbg"><span id='load' class="bar"></span></div>
+        </div>
+ <div class="main">       
+<img src="img/1.jpg">
+<img src="img/2.jpg">
+<img src="img/3.jpg">
+<img src="img/4.jpg">
+<img src="img/5.jpg">
+<img src="img/gd001.png">
+<img src="img/gd002.png">
+<img src="img/gd003.png">
+<img src="img/gd004.png">
+<img src="img/gd005.png">
+<img src="img/gd006.png">
+<img src="img/gd007.png">
+<img src="img/gd008.png"> 
+</div>
+
+		<script>
+		$(function(){
+			bef()
+			}); 
+		var int_count=0; 
+		function bef(){
+			int_count++;
+			$('.barbg span').css({width:int_count+'%'});
+			$('#precent').html(int_count+"%")
+			
+			at=setTimeout(function(){bef();},30);
+			if(int_count>60){
+				//return;
+				clearTimeout(at);
+				new Loading("load",aImg,function(aImg){
+					var frag=document.createDocumentFragment()
+					for(var i=0;i<aImg.length;i++){
+						frag.appendChild(aImg[i])
+					}
+					//document.body.appendChild(frag); 
+					setTimeout(function(){
+						document.getElementById('non').style.display='none';
+						$('.main').fadeIn();
+					 },500); 
+					
+				});
+				} 
+			
+			}
+		 
+		
+			var prehtml=document.getElementById('precent')
+			function Loading(){
+				this.init.apply(this,arguments)
+			}
+			Loading.prototype.init=function(id,aImg,handler){
+				var oCon=document.getElementById(id),
+					aData=[],
+					iImgCount=0,
+					iLoaded=0;
+				if(!oCon){
+					return;
+				}
+				for(var i=0,iImgCount=aImg.length;i<iImgCount;i++){
+					(function(i){
+						var oImg=new Image();
+						oImg.onload=function(){
+							iLoaded=iLoaded+1
+							console.log(iLoaded)
+							//alert(1)
+							oCon.style.width=Math.ceil(60+iLoaded/iImgCount*40)+"%";
+							precent.innerHTML =Math.ceil(60+iLoaded/iImgCount*40)+"%";
+							this.onload=null;
+							var aTmp=document.createElement("img");
+							aTmp.src=this.src;
+							aData.push(aTmp);
+							if(aData[i]&&aData.length==iImgCount){								
+								handler(aData);
+							}
+						}
+						oImg.src=aImg[i];
+					})(i);
+				}
+			}
+			var aImg=["img/1.jpg",
+				"img/2.jpg",
+				"img/3.jpg",
+				"img/4.jpg",
+				"img/5.jpg",
+				"img/gd001.png",
+				"img/gd002.png",
+				"img/gd003.png",
+				"img/gd004.png",
+				"img/gd005.png",
+				"img/gd006.png",
+				"img/gd007.png",
+				"img/gd008.png"
+				];
+			 
+		</script>
+
+	</body>
+</html>
